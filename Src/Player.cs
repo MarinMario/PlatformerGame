@@ -9,7 +9,7 @@ namespace DeliverBullets {
         public CollisionBox collisionBox = new CollisionBox(new Rectangle(0, 100, 100, 100));
         Texture2D texture;
 
-        int speed = 500;
+        int speed = 400;
 
         public Player() {
             texture = Utils.Shapes.Rect(GameLoop.graphicsDevice, collisionBox.rect.Size, 5, Color.Red, Color.Gold);
