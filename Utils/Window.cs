@@ -12,6 +12,8 @@ namespace Utils {
         public Point resolution;
         public WindowAspect windowAspect;
         public RenderTarget2D renderTarget;
+        Point scaledWindowSize = Point.Zero;
+        Point windowPosition = Point.Zero;
 
         public Window(Point resolution, WindowAspect windowAspect, RenderTarget2D renderTarget) {
             this.resolution = resolution;
@@ -19,34 +21,43 @@ namespace Utils {
             this.renderTarget = renderTarget;
         }
 
+        public Point MousePosition() {
+            var m = Mouse.GetState().Position;
+            var mScaled = (m - windowPosition) * resolution / scaledWindowSize;
+
+            return mScaled;
+        }
+
+        public void UpdateSize(GraphicsDevice graphicsDevice) {
+            var size = graphicsDevice.Viewport.Bounds.Size;
+            switch (windowAspect) {
+                case WindowAspect.Expand:
+                    scaledWindowSize = size;
+                    windowPosition = Point.Zero;
+                    break;
+                case WindowAspect.Keep: 
+                    {
+                        var resRatio = (float)resolution.X / (float)resolution.Y;
+                        var scaledRes = new Point((int)(size.Y * resRatio), (int)(size.X / resRatio));
+                        scaledWindowSize =  
+                            size.X > size.Y && size.X > scaledRes.X
+                                ? new Point(scaledRes.X, size.Y)
+                                : new Point(size.X, scaledRes.Y);
+                        windowPosition = (size - scaledWindowSize) / new Point(2);
+                    }
+                    break;
+            }
+        }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Action draw) {
             graphicsDevice.SetRenderTarget(renderTarget);
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             draw();
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);
-            spriteBatch.Begin();
-            var size = graphicsDevice.Viewport.Bounds.Size;
-            switch (windowAspect) {
-                case WindowAspect.Expand:
-                    spriteBatch.Draw(renderTarget, new Rectangle(Point.Zero, size), Color.White);
-                    break;
-                case WindowAspect.Keep:
-                    {
-                        var resRatio = (float)resolution.X / (float)resolution.Y;
-                        var scaledRes = new Point((int)(size.Y * resRatio), (int)(size.X / resRatio));
-                        var scaledWindowSize =  
-                            size.X > size.Y && size.X > scaledRes.X
-                                ? new Point(scaledRes.X, size.Y)
-                                : new Point(size.X, scaledRes.Y);
-                        var windowPosition = (size - scaledWindowSize) / new Point(2);
-                        
-                        spriteBatch.Draw(renderTarget, new Rectangle(windowPosition, scaledWindowSize), Color.White);
-                    }
-                    break;
-            }
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            spriteBatch.Draw(renderTarget, new Rectangle(windowPosition, scaledWindowSize), Color.White);
             spriteBatch.End();
         }
     }
