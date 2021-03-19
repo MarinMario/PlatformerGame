@@ -19,12 +19,12 @@ namespace Utils {
             sb.Draw(texture, new Rectangle(position, size), Color.White);
         }
 
-        public bool Hovered() {
+        public bool Hovered(Point mousePos) {
             var rect = new Rectangle(position, size);
-            return rect.Contains(Mouse.GetState().Position);
+            return rect.Contains(mousePos);
         }
-        public bool Pressed() {
-            return Hovered() && Mouse.GetState().LeftButton == ButtonState.Pressed;
+        public bool Pressed(Point mousePos) {
+            return Hovered(mousePos) && Mouse.GetState().LeftButton == ButtonState.Pressed;
         }
     }
 }

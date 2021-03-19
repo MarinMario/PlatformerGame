@@ -9,10 +9,10 @@ namespace DeliverBullets {
         public CollisionBox collisionBox = new CollisionBox(new Rectangle(0, 100, 100, 100));
         Texture2D texture;
 
-        int speed = 400;
+        int speed = 500;
 
         public Player() {
-            texture = Utils.Shapes.Rect(GameLoop.graphicsDevice, collisionBox.rect.Size, 5, Color.Red, Color.Gold);
+            texture = Utils.Shapes.Rect(Global.graphicsDevice, collisionBox.rect.Size, 5, Color.Red, Color.Gold);
         }
 
         public void Update(float delta) {
@@ -28,9 +28,9 @@ namespace DeliverBullets {
 
             if (direction != Vector2.Zero) {
                 direction.Normalize();
-                var velocity = direction * speed * delta;
-                collisionBox.rect.Location += new Point((int)velocity.X, (int)velocity.Y);
             }
+            var velocity = direction * speed * delta;
+            collisionBox.rect.Location += velocity.ToPoint();
         }
 
         public void Draw(SpriteBatch spriteBatch) {

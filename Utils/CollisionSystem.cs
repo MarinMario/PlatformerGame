@@ -1,8 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System;
 
 
 namespace Utils {
@@ -23,17 +21,17 @@ namespace Utils {
                     var mbo = movingBodies[mb];
                     var sbo = staticBodies[sb];
                     switch (collision) {
-                        case CollisionDir.Up:
+                        case (0, -1):
                             mbo.rect.Location = new Point(mbo.rect.Location.X, sbo.rect.Bottom);
                             break;
-                        case CollisionDir.Down:
+                        case (0, 1):
                             mbo.rect.Location = new Point(mbo.rect.Location.X, sbo.rect.Top - mbo.rect.Height);
                             break;
-                        case CollisionDir.Left:
-                             mbo.rect.Location = new Point(sbo.rect.Right, mbo.rect.Location.Y);
+                        case (-1, 0):
+                            mbo.rect.Location = new Point(sbo.rect.Right, mbo.rect.Location.Y);
                             break;
-                        case CollisionDir.Right:
-                             mbo.rect.Location = new Point(sbo.rect.Left - mbo.rect.Width, mbo.rect.Location.Y);
+                        case (1, 0):
+                            mbo.rect.Location = new Point(sbo.rect.Left - mbo.rect.Width, mbo.rect.Location.Y);
                             break;
                     }
                 }

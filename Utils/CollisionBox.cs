@@ -1,26 +1,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System;
-
 
 namespace Utils {
-    
-    public enum CollisionDir {
-        Up, Down, Left, Right, None
-    }
-
     class CollisionBox {
         public Rectangle rect = new Rectangle();
         Texture2D texture;
-        Color color = Color.Blue;
+        public Color color = Color.Blue;
 
         public CollisionBox(Rectangle rect) {
             this.rect = rect;
         }
 
-        public CollisionDir Collides(CollisionBox collisionBox, int collisionMargin) {
+        public (int, int) Collides(CollisionBox collisionBox, int collisionMargin) {
             bool CheckRange(int a, int b) {
                 var t = a - b;
                 if (t > -collisionMargin && t < collisionMargin)
@@ -28,21 +19,17 @@ namespace Utils {
                 return false;
             }
 
-            color = Color.Red;
-            collisionBox.color = Color.Red;
             if (rect.Intersects(collisionBox.rect)) {
                 if (CheckRange(rect.Top, collisionBox.rect.Bottom))
-                    return CollisionDir.Up;
+                    return (0, -1);
                 if (CheckRange(rect.Bottom, collisionBox.rect.Top))
-                    return CollisionDir.Down;
+                    return (0, 1);
                 if (CheckRange(rect.Left, collisionBox.rect.Right))
-                    return CollisionDir.Left;
+                    return (-1, 0);
                 if (CheckRange(rect.Right, collisionBox.rect.Left))
-                    return CollisionDir.Right;
+                    return (1, 0);
             }
-            color = Color.Blue;
-            collisionBox.color = Color.Blue;
-            return CollisionDir.None;
+            return (0, 0);
         }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice) {
