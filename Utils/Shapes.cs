@@ -19,5 +19,11 @@ namespace Utils {
             texture.SetData(data);
             return texture;
         }
+
+        public static Texture2D ColorRect(GraphicsDevice graphicsDevice, int width, int height, Color color) {
+            var q = 40;
+            var color2 = new Color(color.R + q, color.G + q, color.B + q);
+            return Rect(graphicsDevice, new Point(width, height), (int)Math.Sqrt(width + height) / 2, color2, color);
+        }
     }
 }

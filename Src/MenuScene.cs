@@ -31,10 +31,10 @@ namespace DeliverBullets {
                         ? buttonTexture2 
                         : buttonTexture;
             
-            testButton.position = (Global.resolution - testButton.size) / new Point(2);
+            testButton.Position = (Global.resolution - testButton.Size) / new Point(2);
 
             if (testButton.Pressed(Global.mousePos))
-                Global.currentScene = new GameScene();
+                Global.currentScene = new MapEditorScene();
         }
 
         public void Draw(SpriteBatch spriteBatch) {
