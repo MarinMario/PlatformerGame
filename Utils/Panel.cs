@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System;
 
 namespace Utils {
+
+    enum AlignItems { Horizontally, Vertically, None }
+
     class Panel : GuiElement {
 
         public Texture2D texture;
@@ -41,18 +44,46 @@ namespace Utils {
                 thing.Draw(spriteBatch);
         }
 
-        public void UpdateVertically(float separationSpace, Point mousePos) {
-            var columnSize = 0f;
-            foreach(var thing in content)
-                columnSize += thing.Size.Y * separationSpace;
-                
+        public void Update(AlignItems alignItems, int separationSpace) {
+            var elemnSize = (x: 0, y: 0);
             for(var i = 0; i < content.Count; i++) {
-                var offsetX = (Size.X - content[i].Size.X) / 2;
-
-                var thing = i != 0 ? (content[i].Size.Y + content[i - 1].Size.Y) / 2 : 1;
-                var offsetY = (int)(thing * separationSpace) * i + Size.Y / 2 - (int)columnSize / 2;
-                content[i].Position = Position + new Point(offsetX, offsetY);
+                elemnSize.x += content[i].Size.X + separationSpace;
+                elemnSize.y += content[i].Size.Y + separationSpace;
             }
+            
+            switch (alignItems) {
+                case AlignItems.Vertically:
+                    for(var i = 0; i < content.Count; i++) {
+                        var lastElemPos = i != 0 ? content[i - 1].Position.Y + content[i -1].Size.Y - Position.Y : 0;
+                        var offsetY = lastElemPos + separationSpace;
+
+                        content[i].Position = Position + new Point(0, offsetY);
+                    }
+
+                    for(var i = 0; i < content.Count; i++) {
+                        var offsetX = (Size.X - content[i].Size.X) / 2;
+                        var offsetY = (Size.Y - elemnSize.y) / 2;
+                        content[i].Position += new Point(offsetX, offsetY);
+                     }
+                    break;
+                case AlignItems.Horizontally:
+                    for(var i = 0; i < content.Count; i++) {
+                        var lastElemPos = i != 0 ? content[i - 1].Position.X + content[i - 1].Size.X - Position.X : 0;
+                        var offsetX = lastElemPos + separationSpace;
+
+                        content[i].Position = Position + new Point(offsetX, 0);
+                    }
+
+                    for(var i = 0; i < content.Count; i++) {
+                        var offsetY = (Size.Y - content[i].Size.Y) / 2;
+                        var offsetX = (Size.X - elemnSize.x) / 2;
+                        content[i].Position += new Point(offsetX, offsetY);
+                     }
+                    break;
+                case AlignItems.None:
+                    break;
+            }
+
         }
     }
 }

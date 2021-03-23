@@ -58,7 +58,7 @@ namespace Utils {
             prevPage.SetTextureByState(pageButtonHover, pageButtonPress, mousePos);
             PageUpdate(mousePos);
             foreach(var thing in content)
-                thing.UpdateVertically(1.1f, mousePos);
+                thing.Update(AlignItems.Horizontally, 2);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -80,13 +80,11 @@ namespace Utils {
                 pageCount += 1;
                 if (pageCount > content.Count - 1)
                     pageCount = 0;
-                Console.WriteLine(pageCount);
             }
             if (prevPage.JustPressed(mousePos)) {
                 pageCount -= 1;
                 if (pageCount < 0)
                     pageCount = content.Count - 1;
-                Console.WriteLine(pageCount);
             }
 
             for(var i = 0; i < content.Count; i++) {
