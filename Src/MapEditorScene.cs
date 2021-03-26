@@ -8,51 +8,81 @@ using Utils;
 
 namespace DeliverBullets {
     class MapEditorScene : Scene {
+        
+        Texture2D bg;
+        PanelList objectMenu;
+        Panel panel;
+        Button hideMenuButton;
+        List<(Point pos, Texture2D texture)> stuff = new List<(Point pos, Texture2D texture)>();
 
-        PanelList panelList;
-        Panel panel3;
+        Texture2D texture1;
+        Texture2D texture2;
+        Texture2D texture3;
 
-        Button selectTexture;
+        Texture2D selectedTexture;
+
+        Button button1;
+        Button button2;
+        Button button3;
 
         public MapEditorScene() {
-            var panelSize = new Point(Global.resolution.X - 300, 500);
-            var panelPos = new Point(100, 100);
-            var panelTexture = Shapes.ColorRect(Global.graphicsDevice, 300, Global.resolution.Y, Color.Gray);
-            var buttonTexture = Shapes.ColorRect(Global.graphicsDevice, 100, 100, Color.Purple);
+            bg = Shapes.ColorRect(Global.graphicsDevice, Global.resolution.X, Global.resolution.Y, Color.Gray);
+
+            var omSize = new Point(64, Global.resolution.Y - 32);
+            var omPos = new Point(Global.resolution.X - omSize.X, 16);
+            var omTexture = Shapes.ColorRect(Global.graphicsDevice, omSize.X, omSize.Y, Color.Gray);
+            objectMenu = new PanelList(Global.graphicsDevice, omTexture, omPos, omSize);
+
+            var hmbTexture = Shapes.ColorRect(Global.graphicsDevice, omSize.X, 16, Color.Gray);
+            hideMenuButton = new Button(hmbTexture, new Point(omPos.X, 0), new Point(omSize.X, 16));
+
+            texture1 = Shapes.ColorRect(Global.graphicsDevice, 32, 32, Color.Purple);
+            texture2 = Shapes.ColorRect(Global.graphicsDevice, 32, 32, Color.Blue);
+            texture3 = Shapes.ColorRect(Global.graphicsDevice, 32, 32, Color.Red);
+            selectedTexture = texture1;
+
+            var bTexture = Shapes.ColorRect(Global.graphicsDevice, 32, 32, Color.Blue);
+            button1 = new Button(bTexture, Point.Zero, new Point(32, 32));
+            button2 = new Button(bTexture, Point.Zero, new Point(32, 32));
+            button3 = new Button(bTexture, Point.Zero, new Point(32, 32));
             
-            var panel = new Panel(Global.graphicsDevice, null, panelPos, panelSize);
-            panel.content.Add(new Button(buttonTexture, new Point(100, 100), new Point(100, 100)));
-            panel.content.Add(new Button(buttonTexture, Point.Zero, new Point(120, 150)));
-            panel.content.Add(new Button(buttonTexture, new Point(500, 300), new Point(100, 100)));
-            panel.content.Add(new Button(buttonTexture, Point.Zero, new Point(100, 100)));
-            var panel2 = new Panel(Global.graphicsDevice, null, panelPos, panelSize);
-            panel2.content.Add(new Button(buttonTexture, Point.Zero, new Point(100, 100)));
-            panel2.content.Add(new Button(buttonTexture, Point.Zero, new Point(150, 200)));
-            panel3 = new Panel(Global.graphicsDevice, null, panelPos, new Point(200, 100));
-            panel3.content.Add(new Button(buttonTexture, Point.Zero, new Point(100, 100)));
-            panel3.content.Add(new Button(buttonTexture, new Point(400, 30), new Point(150, 100)));
-            panel3.content.Add(new Button(buttonTexture, Point.Zero, new Point(120, 100)));
-            panel2.content.Add(panel3);
-    
+            panel = new Panel(Global.graphicsDevice, null, omPos, omSize);
+            panel.content.Add(button1);
+            panel.content.Add(button2);
+            panel.content.Add(button3);
+            
+            panel.Align(AlignItems.Vertically, 2);
+            objectMenu.content.Add(panel);
 
-            panelList = new PanelList(Global.graphicsDevice, panelTexture, panelPos, panelSize);
-            panelList.content.Add(panel2);
-            panelList.content.Add(panel);
-            // panelList.content.Add(panel3);
-
-            selectTexture = new Button(
-                Shapes.Rect(Global.graphicsDevice, new Point(200, 200), 10, Color.Blue, Color.Red), 
-                new Point(200, 200), new Point(200, 200));
         }
 
         public void Update(float delta) {
-            panel3.Update(AlignItems.Vertically, 10);
-            panelList.Update(Global.mousePos);
+            objectMenu.Update(Global.mousePos);
+            if(hideMenuButton.JustReleased(Global.mousePos))
+                objectMenu.Visible = !objectMenu.Visible;
+            
+            if(Mouse.GetState().LeftButton == ButtonState.Pressed && Global.mousePos.X < objectMenu.Position.X - 32)
+                stuff.Add((ConvertToGrid(Global.mousePos), selectedTexture));
+            
+
+            if(button1.JustReleased(Global.mousePos))
+                selectedTexture = texture1;
+            if(button2.JustReleased(Global.mousePos))
+                selectedTexture = texture2;
+            if(button3.JustReleased(Global.mousePos))
+                selectedTexture = texture3;
+        }
+
+        Point ConvertToGrid(Point pos) {
+            return new Point(32) * (pos / new Point(32));
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            panelList.Draw(spriteBatch);
-            // selectTexture.Draw(spriteBatch);
+            // spriteBatch.Draw(bg, Vector2.Zero, Color.White);
+            objectMenu.Draw(spriteBatch);
+            hideMenuButton.Draw(spriteBatch);
+            foreach(var thing in stuff)
+                spriteBatch.Draw(thing.texture, thing.pos.ToVector2(), Color.White);
         }
 
     }

@@ -8,7 +8,7 @@ using System;
 namespace DeliverBullets {
     static class Global {
         public static GraphicsDevice graphicsDevice;
-        public static Point mousePos;
+        public static Point mousePos = Point.Zero;
         public static Scene currentScene;
         public static Point resolution = new Point(1280, 720);
     }

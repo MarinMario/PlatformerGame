@@ -10,36 +10,41 @@ namespace DeliverBullets {
         Texture2D buttonTexture;
         Texture2D buttonTexture2;
         Texture2D buttonTexture3;
-        Button testButton;
+
+        Panel panel;
+        Button gameScene;
+        Button mapEditorScene;
         
         Texture2D bg;
 
         public MenuScene() {
-            buttonTexture = Shapes.Rect(Global.graphicsDevice, new Point(200, 100), 10, Color.Green, Color.Black);
-            buttonTexture2 = Shapes.Rect(Global.graphicsDevice, new Point(200, 100), 10, Color.Yellow, Color.Black);
-            buttonTexture3 = Shapes.Rect(Global.graphicsDevice, new Point(200, 100), 10, Color.Red, Color.Black);
-            testButton = new Button(buttonTexture, new Point(300, 300), new Point(200, 100));
+            buttonTexture = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Green);
+            buttonTexture2 = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Orange);
+            buttonTexture3 = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Red);
+            gameScene = new Button(buttonTexture, Point.Zero, new Point(64, 32));
+            mapEditorScene = new Button(buttonTexture, Point.Zero, new Point(64, 32));
 
-            bg = Shapes.Rect(Global.graphicsDevice, Global.resolution, 20, Color.Purple, Color.Red);
+            panel = new Panel(Global.graphicsDevice, null, Global.resolution / new Point(2), Point.Zero);
+            panel.content.Add(gameScene);
+            panel.content.Add(mapEditorScene);
+
+            bg = Shapes.ColorRect(Global.graphicsDevice, Global.resolution.X, Global.resolution.Y, Color.Purple);
         }
 
         public void Update(float delta) {
-            testButton.texture = 
-                testButton.Pressed(Global.mousePos) 
-                    ? buttonTexture3 
-                    : testButton.Hovered(Global.mousePos) 
-                        ? buttonTexture2 
-                        : buttonTexture;
-            
-            testButton.Position = (Global.resolution - testButton.Size) / new Point(2);
-
-            if (testButton.Pressed(Global.mousePos))
+            gameScene.SetTextureByState(buttonTexture2, buttonTexture3, Global.mousePos);
+            mapEditorScene.SetTextureByState(buttonTexture2, buttonTexture3, Global.mousePos);
+            if (gameScene.JustReleased(Global.mousePos))
+                Global.currentScene = new GameScene();
+            if (mapEditorScene.JustReleased(Global.mousePos))
                 Global.currentScene = new MapEditorScene();
+
+            panel.Align(AlignItems.Vertically, 10);            
         }
 
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(bg, Vector2.Zero, Color.White);
-            testButton.Draw(spriteBatch);
+            panel.Draw(spriteBatch);
         }
     }
 }

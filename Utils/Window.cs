@@ -14,6 +14,7 @@ namespace Utils {
         public RenderTarget2D renderTarget;
         Point scaledWindowSize = Point.Zero;
         Point windowPosition = Point.Zero;
+        
 
         public Window(Point resolution, WindowAspect windowAspect, RenderTarget2D renderTarget) {
             this.resolution = resolution;

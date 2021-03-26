@@ -44,7 +44,7 @@ namespace Utils {
                 thing.Draw(spriteBatch);
         }
 
-        public void Update(AlignItems alignItems, int separationSpace) {
+        public void Align(AlignItems alignItems, int separationSpace) {
             var elemnSize = (x: 0, y: 0);
             for(var i = 0; i < content.Count; i++) {
                 elemnSize.x += content[i].Size.X + separationSpace;

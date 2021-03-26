@@ -7,7 +7,9 @@ namespace Utils {
     class Button : GuiElement {
 
         public Texture2D texture;
-        Texture2D ogTexture;
+        public Texture2D ogTexture;
+        public Texture2D hoverTexture;
+        public Texture2D pressTexture;
         public Point Position { get; set; }
         public Point Size { get; set; }
         public bool Visible { get; set; }
@@ -42,6 +44,12 @@ namespace Utils {
             previousPressed = currentPressed;
             currentPressed = Pressed(mousePos);
             return currentPressed && !previousPressed;
+        }
+
+        public bool JustReleased(Point mousePos) {
+            previousPressed = currentPressed;
+            currentPressed = Pressed(mousePos);
+            return !currentPressed && previousPressed && Hovered(mousePos);
         }
 
         public void SetTextureByState(Texture2D onHovered, Texture2D onPressed, Point mousePos) {

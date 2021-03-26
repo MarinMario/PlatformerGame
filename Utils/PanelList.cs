@@ -42,7 +42,7 @@ namespace Utils {
             this.Size = size;
             this.Visible = visible;
 
-            var buttonSize = new Point(size.X / 2, 50);
+            var buttonSize = new Point(size.X / 2, 16);
             pageButtonNormal = Shapes.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, Color.Gray);
             pageButtonHover = Shapes.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
                 new Color(Color.Gray.ToVector3() - Vector3.One * 0.1f));
@@ -57,8 +57,6 @@ namespace Utils {
             nextPage.SetTextureByState(pageButtonHover, pageButtonPress, mousePos);
             prevPage.SetTextureByState(pageButtonHover, pageButtonPress, mousePos);
             PageUpdate(mousePos);
-            foreach(var thing in content)
-                thing.Update(AlignItems.Horizontally, 2);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -75,7 +73,7 @@ namespace Utils {
             prevPage.Draw(spriteBatch);
         }
 
-        public void PageUpdate(Point mousePos) {
+        void PageUpdate(Point mousePos) {
             if (nextPage.JustPressed(mousePos)) {
                 pageCount += 1;
                 if (pageCount > content.Count - 1)
