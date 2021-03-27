@@ -11,9 +11,6 @@ namespace DeliverBullets {
 
         Player player;
         Collision collision = new Collision();
-        CollisionBox testRect = new CollisionBox(new Rectangle(400, 100, 100, 100));
-        CollisionBox testRect2 = new CollisionBox(new Rectangle(400, 310, 100, 100));
-        CollisionBox testRect3 = new CollisionBox(new Rectangle(290, 100, 100, 100));
         
         Texture2D test1;
         Texture2D test2;
@@ -34,11 +31,6 @@ namespace DeliverBullets {
             //     colSys.staticBodies.Add(new CollisionBox(cb));
 
             player = new Player(collision);
-            collision.bodies.Add(player.collisionBox);
-            // collision.bodies.Add(new CollisionBox(new Rectangle(300, 300, 150, 150)));
-            // collision.bodies.Add(new CollisionBox(new Rectangle(450, 300, 150, 150)));
-            // collision.bodies.Add(new CollisionBox(new Rectangle(450, 450, 150, 150)));
-            // collision.bodies.Add(new CollisionBox(new Rectangle(600, 450, 200,  15)));
 
             collision.bodies.Add(new CollisionBox(new Rectangle(50, 200, 300, 20)));
             collision.bodies.Add(new CollisionBox(new Rectangle(400, 400, 200, 20)));
@@ -54,25 +46,11 @@ namespace DeliverBullets {
 
         public void Update(float delta) {
             player.Update(delta);
-            // player.UpdateTopDown(delta);
-            // colSys.Update();
             
         }
 
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(bg, new Rectangle(Point.Zero, Global.resolution), Color.White);
-            // foreach (var t in map.textures)
-            //     switch (t.Item1) {
-            //         case 1:
-            //             spriteBatch.Draw(test1, t.Item2.ToVector2(), Color.White);
-            //             break;
-            //         case 2:
-            //             spriteBatch.Draw(test2, t.Item2.ToVector2(), Color.White);
-            //             break;
-            //         case 3:
-            //             spriteBatch.Draw(test3, t.Item2.ToVector2(), Color.White);
-            //             break;
-            //     }
             foreach(var thing in collision.bodies)
                 spriteBatch.Draw(cbTexture, thing.rect, Color.White);
             player.Draw(spriteBatch);

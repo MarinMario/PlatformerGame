@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace DeliverBullets {
-    class Player : Scene {
+    class Player {
 
         public CollisionBox collisionBox = new CollisionBox(new Rectangle(100, 50, 32, 32));
         Texture2D texture;
@@ -20,10 +20,19 @@ namespace DeliverBullets {
 
         public Player(Collision collision) {
             this.collision = collision;
+            collision.bodies.Add(collisionBox);
             texture = Utils.Shapes.Rect(Global.graphicsDevice, collisionBox.rect.Size, 5, Color.Red, Color.Gold);
         }
-
+        
         public void Update(float delta) {
+            PlatformerMovement(delta);
+        }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(texture, collisionBox.rect, Color.White);
+        }
+
+        void PlatformerMovement(float delta) {
             var directionX = 0;
             if (Keyboard.GetState().IsKeyDown(Keys.A))
                 directionX = -1;
@@ -32,10 +41,11 @@ namespace DeliverBullets {
             velocity.X = directionX * speed * delta;
 
             velocity.Y += gravity * delta;
-            if(Utils.Input.IsKeyPressed(Keys.Space, true) && jumpTimes < maxJumpTimes) {
-                velocity.Y = -jumpForce;
-                jumpTimes += 1;
-            }
+            if(jumpTimes < maxJumpTimes)
+                if(Input.IsKeyPressed(Keys.J, true)) {
+                    velocity.Y = -jumpForce;
+                    jumpTimes += 1;
+                }
 
             velocity.X = MathHelper.Clamp(velocity.X, -maxVelocity.X, maxVelocity.X);
             velocity.Y = MathHelper.Clamp(velocity.Y, -maxVelocity.Y, maxVelocity.Y);
@@ -44,33 +54,38 @@ namespace DeliverBullets {
             testRect.Location += velocity.ToPoint();
             var c = collision.CheckCollision(testRect, 15);
 
+            if(c.y == 1 && velocity.Y > 0)
+                jumpTimes = 0;
+
+            var collisionX = false;
             foreach(var rect in c.collidingRects)
-                if (rect != collisionBox.rect) {
+                if (rect != collisionBox.rect)
                     if(rect.Height > 20) {
+                        collisionX = c.x != 0;
                         if (c.x == -1 && velocity.X < 0 || c.x == 1 && velocity.X > 0)
                             velocity.X = 0;
                         if (c.y == -1 && velocity.Y < 0 || c.y == 1 && velocity.Y > 0)
                             velocity.Y = 0;
-                    } else if (c.y == 1 && velocity.Y > 0)
+                    } else if (c.y == 1 && velocity.Y > 0) {
+                        collisionX = false;
                         velocity.Y = 0;
-                }
+                    }
 
-            if(c.x != 0 && c.y == 0) {
-                jumpTimes = 0;
-                maxVelocity.Y = 1;
-                jumpForce = 0;
-            } else {
-                maxVelocity.Y = 10;
-                jumpForce = 7;
-            }
-            if(c.y == 1)
-                jumpTimes = 0;
+            
+                if(collisionX && c.y == 0) {
+                    jumpTimes = 0;
+                    maxVelocity.Y = 1;
+                    jumpForce = 0;
+                } else {
+                    maxVelocity.Y = 10;
+                    jumpForce = 7;
+                }
 
             collisionBox.rect.Location += velocity.ToPoint();
             
         }
 
-        public void UpdateTopDown(float delta) {
+        void TopDownMovement(float delta) {
             var direction = Vector2.Zero;
             if (Keyboard.GetState().IsKeyDown(Keys.A))
                 direction.X = -1;
@@ -89,22 +104,12 @@ namespace DeliverBullets {
             testRect.Location += velocity.ToPoint();
             var c = collision.CheckCollision(testRect, 15);
             
-            foreach(var rect in c.collidingRects)
-                if (rect != collisionBox.rect) {
-                    if(rect.Height > 20) {
-                        if (c.x == -1 && velocity.X < 0 || c.x == 1 && velocity.X > 0)
-                            velocity.X = 0;
-                        if (c.y == -1 && velocity.Y < 0 || c.y == 1 && velocity.Y > 0)
-                            velocity.Y = 0;
-                    } else if (c.y == 1 && velocity.Y > 0)
-                        velocity.Y = 0;
-                }
+            if (c.x == -1 && velocity.X < 0 || c.x == 1 && velocity.X > 0)
+                velocity.X = 0;
+            if (c.y == -1 && velocity.Y < 0 || c.y == 1 && velocity.Y > 0)
+                velocity.Y = 0;
 
             collisionBox.rect.Location += velocity.ToPoint();
-        }
-
-        public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture, collisionBox.rect, Color.White);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Utils {
         static KeyboardState currentKeyState;
         static KeyboardState previousKeyState;
 
-        public static bool IsKeyPressed(Keys key, bool oneShot)
+        public static bool IsKeyPressed(Keys key, bool oneShot = false)
         {
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
