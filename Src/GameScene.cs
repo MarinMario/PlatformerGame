@@ -35,9 +35,14 @@ namespace DeliverBullets {
 
             player = new Player(collision);
             collision.bodies.Add(player.collisionBox);
-            collision.bodies.Add(new CollisionBox(new Rectangle(50, 200, 300, 1)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(400, 400, 200, 1)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(100, 550, 700, 1)));
+            // collision.bodies.Add(new CollisionBox(new Rectangle(300, 300, 150, 150)));
+            // collision.bodies.Add(new CollisionBox(new Rectangle(450, 300, 150, 150)));
+            // collision.bodies.Add(new CollisionBox(new Rectangle(450, 450, 150, 150)));
+            // collision.bodies.Add(new CollisionBox(new Rectangle(600, 450, 200,  15)));
+
+            collision.bodies.Add(new CollisionBox(new Rectangle(50, 200, 300, 20)));
+            collision.bodies.Add(new CollisionBox(new Rectangle(400, 400, 200, 20)));
+            collision.bodies.Add(new CollisionBox(new Rectangle(100, 550, 700, 20)));
             collision.bodies.Add(new CollisionBox(new Rectangle(1000, 300, 20, 300)));
             collision.bodies.Add(new CollisionBox(new Rectangle(0, 0, 30, Global.resolution.Y)));
             collision.bodies.Add(new CollisionBox(new Rectangle(0, 0, Global.resolution.X, 30)));
@@ -49,6 +54,7 @@ namespace DeliverBullets {
 
         public void Update(float delta) {
             player.Update(delta);
+            // player.UpdateTopDown(delta);
             // colSys.Update();
             
         }

@@ -13,7 +13,7 @@ namespace Utils {
         
         public List<CollisionBox> bodies = new List<CollisionBox>();
 
-        public (int x, int y) CheckCollision(Rectangle rect, int margin) {
+        public (int x, int y, List<Rectangle> collidingRects) CheckCollision(Rectangle rect, int margin) {
             bool CheckRange(int a, int b) {
                 var t = a - b;
                 if (t > -margin && t < margin)
@@ -21,9 +21,9 @@ namespace Utils {
                 return false;
             }
 
-            var collision = (x: 0, y: 0);
+            var collision = (x: 0, y: 0, collidingRects: new List<Rectangle>{});
             foreach (var collisionBox in bodies)
-                if (rect.Intersects(collisionBox.rect)) {
+                if (rect != collisionBox.rect && rect.Intersects(collisionBox.rect)) {
                     if (CheckRange(rect.Left, collisionBox.rect.Right))
                         collision.x = -1;
                     if (CheckRange(rect.Right, collisionBox.rect.Left))
@@ -32,6 +32,7 @@ namespace Utils {
                         collision.y = -1;
                     if (CheckRange(rect.Bottom, collisionBox.rect.Top))
                         collision.y = 1;
+                    collision.collidingRects.Add(collisionBox.rect);
                 }
             return collision;
         }
