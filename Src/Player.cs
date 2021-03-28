@@ -14,7 +14,7 @@ namespace DeliverBullets {
         int gravity = 10;
         int jumpForce = 7;
         int jumpTimes = 0;
-        int maxJumpTimes = 1;
+        int maxJumpTimes = 1000;
         Vector2 velocity = Vector2.Zero;
         Vector2 maxVelocity = new Vector2(10, 10);
 
@@ -25,7 +25,10 @@ namespace DeliverBullets {
         }
         
         public void Update(float delta) {
+            // TopDownMovement(delta);
             PlatformerMovement(delta);
+            MoveCamera((int)(5000 * delta));
+            // Global.cameraPos.X = collisionBox.rect.Location.X - Global.resolution.X / 2;
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -82,7 +85,6 @@ namespace DeliverBullets {
                 }
 
             collisionBox.rect.Location += velocity.ToPoint();
-            
         }
 
         void TopDownMovement(float delta) {
@@ -110,6 +112,28 @@ namespace DeliverBullets {
                 velocity.Y = 0;
 
             collisionBox.rect.Location += velocity.ToPoint();
+        }
+
+        void MoveCamera(int transitionSpeed) {
+            //this only works because it's on ints. If the variables in this line were floats instead it would be like this:
+            //var cameraPos = Math.Floor(Location.X / resolution.X) * resolution.X;
+            var cameraPos = (collisionBox.rect.Location / Global.resolution) * Global.resolution;
+
+            Global.cameraPos.X += collisionBox.rect.Location.X > 0
+                ? moveInt(Global.cameraPos.X, cameraPos.X, transitionSpeed)
+                : moveInt(Global.cameraPos.X, cameraPos.X - Global.resolution.X, transitionSpeed);
+            Global.cameraPos.Y += collisionBox.rect.Location.Y > 0
+                ? moveInt(Global.cameraPos.Y, cameraPos.Y, transitionSpeed)
+                : moveInt(Global.cameraPos.Y, cameraPos.Y - Global.resolution.Y, transitionSpeed);
+            
+
+            int moveInt(int n, int target, int amount) {
+                if(n < target && target - n > 50)
+                    return amount;
+                if(n > target && n - target > 50)
+                    return -amount;
+                return 0;
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ namespace DeliverBullets
             Global.currentScene.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             window.UpdateSize(GraphicsDevice);
             window.resolution = Global.resolution;
+            window.cameraPosition = new Point(-1) * Global.cameraPos;
             Global.mousePos = window.MousePosition();
             base.Update(gameTime);
         }

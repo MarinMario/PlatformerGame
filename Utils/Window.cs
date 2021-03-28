@@ -14,6 +14,7 @@ namespace Utils {
         public RenderTarget2D renderTarget;
         Point scaledWindowSize = Point.Zero;
         Point windowPosition = Point.Zero;
+        public Point cameraPosition = Point.Zero;
         
 
         public Window(Point resolution, WindowAspect windowAspect, RenderTarget2D renderTarget) {
@@ -24,7 +25,7 @@ namespace Utils {
 
         public Point MousePosition() {
             var m = Mouse.GetState().Position;
-            var mScaled = (m - windowPosition) * resolution / scaledWindowSize;
+            var mScaled = (m - windowPosition - cameraPosition) * resolution / scaledWindowSize;
 
             return mScaled;
         }
@@ -52,7 +53,10 @@ namespace Utils {
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Action draw) {
             graphicsDevice.SetRenderTarget(renderTarget);
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            spriteBatch.Begin(
+                samplerState: SamplerState.PointClamp, 
+                transformMatrix: Matrix.CreateTranslation(cameraPosition.X, cameraPosition.Y, 0f)
+            );
             draw();
             spriteBatch.End();
 
