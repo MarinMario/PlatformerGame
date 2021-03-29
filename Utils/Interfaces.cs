@@ -14,4 +14,7 @@ namespace Utils {
         bool Visible { get; set; }
     }
 
+    interface Collider {
+        Rectangle CollisionBox { get; set; }
+    }
 }

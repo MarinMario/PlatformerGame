@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace Utils {
-    static class Shapes {
+    static class Helper {
         public static Texture2D Rect(GraphicsDevice gd, Point size, int borderSize, Color color, Color borderColor) {
             var texture = new Texture2D(gd, size.X, size.Y);
             var data = new Color[size.X * size.Y];
@@ -24,6 +24,20 @@ namespace Utils {
             var q = 40;
             var color2 = new Color(color.R + q, color.G + q, color.B + q);
             return Rect(graphicsDevice, new Point(width, height), (int)Math.Sqrt(width + height) / 2, color2, color);
+        }
+
+        public static float MoveVal(float n, float target, float amount) {
+            if(n < target && target - n > 0)
+                return amount;
+            if(n > target && n - target > 0)
+                return -amount;
+            return 0;
+        }
+
+        public static Vector2 MoveVector(Vector2 vector, Vector2 target, float amount) {
+            var x = MoveVal(vector.X, target.X, amount);
+            var y = MoveVal(vector.Y, target.Y, amount);
+            return new Vector2(x, y);
         }
     }
 }

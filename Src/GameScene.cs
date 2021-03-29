@@ -17,41 +17,38 @@ namespace DeliverBullets {
         Texture2D test3;
         Texture2D cbTexture;
 
-        LoadedMap map;
         Texture2D bg;
+        MovingPlatform movingPlatform;
 
         public GameScene() {
-            test1 = Shapes.Rect(Global.graphicsDevice, new Point(700, 50), 5, Color.Red, Color.Blue);
-            test2 = Shapes.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Yellow, Color.Blue);
-            test3 = Shapes.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Purple, Color.Blue);
-            cbTexture = Shapes.Rect(Global.graphicsDevice, new Point(10, 10), 0, Color.Blue, Color.Blue);
+            test1 = Helper.Rect(Global.graphicsDevice, new Point(700, 50), 5, Color.Red, Color.Blue);
+            test2 = Helper.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Yellow, Color.Blue);
+            test3 = Helper.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Purple, Color.Blue);
+            cbTexture = Helper.Rect(Global.graphicsDevice, new Point(10, 10), 0, Color.Blue, Color.Blue);
 
             // map = MapLoader.Load(@"Content/Test.map");
             // foreach(var cb in map.collisionRects)
             //     colSys.staticBodies.Add(new CollisionBox(cb));
 
             player = new Player(collision);
+            var platformTexture = Helper.Rect(Global.graphicsDevice, new Point(10, 10), 0, Color.Red, Color.Red);
+            movingPlatform = new MovingPlatform(new Point(200, 600), new Point(500, 300), 200, platformTexture, collision);
+            var platform = new Platform(new Point(0, Global.resolution.Y - 20), Global.resolution.X, platformTexture, collision);
+            var p2 = new Platform(new Point(800, 500), 300, platformTexture, collision);
 
-            collision.bodies.Add(new CollisionBox(new Rectangle(50, 200, 300, 20)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(400, 400, 200, 20)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(100, 550, 700, 20)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(1000, 300, 20, 300)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(-Global.resolution.X * 2, 0, 30, Global.resolution.Y)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(-Global.resolution.X, -50, Global.resolution.X, 100)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(Global.resolution.X * 3 - 30, 0, 30, Global.resolution.Y)));
-            collision.bodies.Add(new CollisionBox(new Rectangle(0, Global.resolution.Y - 30, Global.resolution.X * 2, 30)));
             
-            bg = Shapes.Rect(Global.graphicsDevice, Global.resolution, 0, Color.Gray, Color.Gray);
+            bg = Helper.Rect(Global.graphicsDevice, Global.resolution, 0, Color.Gray, Color.Gray);
         }
 
         public void Update(float delta) {
             player.Update(delta);
+            movingPlatform.Update(delta);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(bg, new Rectangle(Global.cameraPos, Global.resolution), Color.White);
             foreach(var thing in collision.bodies)
-                spriteBatch.Draw(cbTexture, thing.rect, Color.White);
+                spriteBatch.Draw(cbTexture, thing.CollisionBox, Color.White);
             player.Draw(spriteBatch);
         }
     }

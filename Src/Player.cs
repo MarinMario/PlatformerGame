@@ -5,23 +5,27 @@ using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace DeliverBullets {
-    class Player {
+    class Player : Collider {
 
-        public CollisionBox collisionBox = new CollisionBox(new Rectangle(100, 50, 32, 32));
+        public Rectangle CollisionBox { get; set; }
         Texture2D texture;
         Collision collision;
         int speed = 400;
+        int acceleration = 20;
+        int friction = 30;
         int gravity = 10;
         int jumpForce = 7;
         int jumpTimes = 0;
         int maxJumpTimes = 1000;
+        bool onGround = true;
         Vector2 velocity = Vector2.Zero;
         Vector2 maxVelocity = new Vector2(10, 10);
 
         public Player(Collision collision) {
             this.collision = collision;
-            collision.bodies.Add(collisionBox);
-            texture = Utils.Shapes.Rect(Global.graphicsDevice, collisionBox.rect.Size, 5, Color.Red, Color.Gold);
+            CollisionBox = new Rectangle(100, 50, 32, 32);
+            collision.bodies.Add(this);
+            texture = Utils.Helper.Rect(Global.graphicsDevice, CollisionBox.Size, 5, Color.Red, Color.Gold);
         }
         
         public void Update(float delta) {
@@ -32,15 +36,16 @@ namespace DeliverBullets {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture, collisionBox.rect, Color.White);
+            spriteBatch.Draw(texture, CollisionBox, Color.White);
         }
 
         void PlatformerMovement(float delta) {
             var directionX = 0;
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            if(Keyboard.GetState().IsKeyDown(Keys.A))
                 directionX = -1;
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            if(Keyboard.GetState().IsKeyDown(Keys.D))
                 directionX = 1;
+            
             velocity.X = directionX * speed * delta;
 
             velocity.Y += gravity * delta;
@@ -53,26 +58,38 @@ namespace DeliverBullets {
             velocity.X = MathHelper.Clamp(velocity.X, -maxVelocity.X, maxVelocity.X);
             velocity.Y = MathHelper.Clamp(velocity.Y, -maxVelocity.Y, maxVelocity.Y);
             
-            var testRect = collisionBox.rect;
+            var testRect = CollisionBox;
             testRect.Location += velocity.ToPoint();
             var c = collision.CheckCollision(testRect, 15);
+            onGround = c.y == 1;
 
             if(c.y == 1 && velocity.Y > 0)
                 jumpTimes = 0;
 
             var collisionX = false;
-            foreach(var rect in c.collidingRects)
-                if (rect != collisionBox.rect)
-                    if(rect.Height > 20) {
+            foreach(var body in c.collidingBodies)
+                if(body != this) {
+                    if(body is Platform) {
+                        if(c.y == 1 && velocity.Y > 0) {
+                            collisionX = false;
+                            velocity.Y = 0;
+                        }
+                    }
+                    else if(body is MovingPlatform) {
+                        if(c.y == 1 && velocity.Y > 0) {
+                            velocity.Y = 0;
+                            velocity.X += (body as MovingPlatform).velocity.X;
+                            var newPos = new Point(CollisionBox.X, body.CollisionBox.Y - CollisionBox.Height + 5);
+                            CollisionBox = new Rectangle(newPos, CollisionBox.Size);
+                        }
+                    } else {
                         collisionX = c.x != 0;
                         if (c.x == -1 && velocity.X < 0 || c.x == 1 && velocity.X > 0)
                             velocity.X = 0;
                         if (c.y == -1 && velocity.Y < 0 || c.y == 1 && velocity.Y > 0)
                             velocity.Y = 0;
-                    } else if (c.y == 1 && velocity.Y > 0) {
-                        collisionX = false;
-                        velocity.Y = 0;
                     }
+                }
 
             
                 if(collisionX && c.y == 0) {
@@ -84,7 +101,7 @@ namespace DeliverBullets {
                     jumpForce = 7;
                 }
 
-            collisionBox.rect.Location += velocity.ToPoint();
+            CollisionBox = new Rectangle(CollisionBox.Location + velocity.ToPoint(), CollisionBox.Size);
         }
 
         void TopDownMovement(float delta) {
@@ -102,7 +119,7 @@ namespace DeliverBullets {
                 direction.Normalize();
             
             var velocity = direction * speed * delta;
-            var testRect = collisionBox.rect;
+            var testRect = CollisionBox;
             testRect.Location += velocity.ToPoint();
             var c = collision.CheckCollision(testRect, 15);
             
@@ -111,29 +128,28 @@ namespace DeliverBullets {
             if (c.y == -1 && velocity.Y < 0 || c.y == 1 && velocity.Y > 0)
                 velocity.Y = 0;
 
-            collisionBox.rect.Location += velocity.ToPoint();
+            CollisionBox = new Rectangle(CollisionBox.Location + velocity.ToPoint(), CollisionBox.Size);
         }
 
         void MoveCamera(int transitionSpeed) {
             //this only works because it's on ints. If the variables in this line were floats instead it would be like this:
             //var cameraPos = Math.Floor(Location.X / resolution.X) * resolution.X;
-            var cameraPos = (collisionBox.rect.Location / Global.resolution) * Global.resolution;
+            var cameraPos = (CollisionBox.Location / Global.resolution) * Global.resolution;
 
-            Global.cameraPos.X += collisionBox.rect.Location.X > 0
-                ? moveInt(Global.cameraPos.X, cameraPos.X, transitionSpeed)
-                : moveInt(Global.cameraPos.X, cameraPos.X - Global.resolution.X, transitionSpeed);
-            Global.cameraPos.Y += collisionBox.rect.Location.Y > 0
-                ? moveInt(Global.cameraPos.Y, cameraPos.Y, transitionSpeed)
-                : moveInt(Global.cameraPos.Y, cameraPos.Y - Global.resolution.Y, transitionSpeed);
+            Global.cameraPos.X = CollisionBox.Location.X > 0
+                ? cameraPos.X
+                : cameraPos.X - Global.resolution.X;
+            Global.cameraPos.Y = CollisionBox.Location.Y > 0
+                ? cameraPos.Y
+                : cameraPos.Y - Global.resolution.Y;
+
+            // Global.cameraPos.X += collisionBox.rect.Location.X > 0
+            //     ? moveInt(Global.cameraPos.X, cameraPos.X, transitionSpeed)
+            //     : moveInt(Global.cameraPos.X, cameraPos.X - Global.resolution.X, transitionSpeed);
+            // Global.cameraPos.Y += collisionBox.rect.Location.Y > 0
+            //     ? moveInt(Global.cameraPos.Y, cameraPos.Y, transitionSpeed)
+            //     : moveInt(Global.cameraPos.Y, cameraPos.Y - Global.resolution.Y, transitionSpeed);
             
-
-            int moveInt(int n, int target, int amount) {
-                if(n < target && target - n > 50)
-                    return amount;
-                if(n > target && n - target > 50)
-                    return -amount;
-                return 0;
-            }
         }
     }
 }

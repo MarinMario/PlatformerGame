@@ -18,9 +18,9 @@ namespace DeliverBullets {
         Texture2D bg;
 
         public MenuScene() {
-            buttonTexture = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Green);
-            buttonTexture2 = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Orange);
-            buttonTexture3 = Shapes.ColorRect(Global.graphicsDevice, 64, 32, Color.Red);
+            buttonTexture = Helper.ColorRect(Global.graphicsDevice, 64, 32, Color.Green);
+            buttonTexture2 = Helper.ColorRect(Global.graphicsDevice, 64, 32, Color.Orange);
+            buttonTexture3 = Helper.ColorRect(Global.graphicsDevice, 64, 32, Color.Red);
             gameScene = new Button(buttonTexture, Point.Zero, new Point(64, 32));
             mapEditorScene = new Button(buttonTexture, Point.Zero, new Point(64, 32));
 
@@ -28,7 +28,7 @@ namespace DeliverBullets {
             panel.content.Add(gameScene);
             panel.content.Add(mapEditorScene);
 
-            bg = Shapes.ColorRect(Global.graphicsDevice, Global.resolution.X, Global.resolution.Y, Color.Purple);
+            bg = Helper.ColorRect(Global.graphicsDevice, Global.resolution.X, Global.resolution.Y, Color.Purple);
         }
 
         public void Update(float delta) {
@@ -37,7 +37,7 @@ namespace DeliverBullets {
             if (gameScene.JustReleased(Global.mousePos))
                 Global.currentScene = new GameScene();
             if (mapEditorScene.JustReleased(Global.mousePos))
-                Global.currentScene = new MapEditorScene();
+                Global.currentScene = new LevelEditorScene();
 
             panel.Align(AlignItems.Vertically, 10);            
         }

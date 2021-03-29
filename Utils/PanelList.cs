@@ -43,10 +43,10 @@ namespace Utils {
             this.Visible = visible;
 
             var buttonSize = new Point(size.X / 2, 16);
-            pageButtonNormal = Shapes.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, Color.Gray);
-            pageButtonHover = Shapes.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
+            pageButtonNormal = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, Color.Gray);
+            pageButtonHover = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
                 new Color(Color.Gray.ToVector3() - Vector3.One * 0.1f));
-            pageButtonPress = Shapes.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
+            pageButtonPress = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
                 new Color(Color.Gray.ToVector3() - Vector3.One * 0.2f));
             
             prevPage = new Button(pageButtonNormal, position + new Point(0, size.Y), buttonSize);
