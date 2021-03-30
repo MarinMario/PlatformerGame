@@ -3,10 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
 
-namespace DeliverBullets
-{
-    public class GameLoop : Game
-    {
+namespace Src {
+    public class GameLoop : Game {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Utils.Window window;

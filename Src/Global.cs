@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 
 
-namespace DeliverBullets {
+namespace Src {
     static class Global {
         public static GraphicsDevice graphicsDevice;
         public static Point mousePos = Point.Zero;

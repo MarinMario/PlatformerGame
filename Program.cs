@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DeliverBullets
+namespace Src
 {
     public static class Program
     {

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace DeliverBullets {
+namespace Src {
     class Player : Collider {
 
         public Rectangle CollisionBox { get; set; }
@@ -20,6 +20,8 @@ namespace DeliverBullets {
         bool onGround = true;
         Vector2 velocity = Vector2.Zero;
         Vector2 maxVelocity = new Vector2(10, 10);
+        float inertiaTimer = 0f;
+        Vector2 inertiaVelocity = Vector2.Zero;
 
         public Player(Collision collision) {
             this.collision = collision;
@@ -78,7 +80,9 @@ namespace DeliverBullets {
                     else if(body is MovingPlatform) {
                         if(c.y == 1 && velocity.Y > 0) {
                             velocity.Y = 0;
-                            velocity.X += (body as MovingPlatform).velocity.X;
+                            inertiaTimer = 0;
+                            inertiaVelocity = (body as MovingPlatform).velocity;
+                            
                             var newPos = new Point(CollisionBox.X, body.CollisionBox.Y - CollisionBox.Height + 5);
                             CollisionBox = new Rectangle(newPos, CollisionBox.Size);
                         }
@@ -90,6 +94,12 @@ namespace DeliverBullets {
                             velocity.Y = 0;
                     }
                 }
+
+                if(inertiaTimer < 2)
+                    if(velocity.X == 0) {
+                        inertiaTimer += delta;
+                        velocity.X += inertiaVelocity.X;
+                    } else inertiaTimer = 2;
 
             
                 if(collisionX && c.y == 0) {

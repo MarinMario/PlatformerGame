@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System;
 using Utils;
 
-namespace DeliverBullets {
+namespace Src {
     class GameScene : Scene {
 
         Player player;
