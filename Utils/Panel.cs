@@ -11,9 +11,19 @@ namespace Utils {
     class Panel : GuiElement {
 
         public Texture2D texture;
-        public Point Position { get; set; }
+
+        Point position;
+        public Point Position { 
+            get { return position; }
+            set {
+                position = value;
+                Align();
+            }
+         }
         public Point Size { get; set; }
 
+        public AlignItems alignItems;
+        int separationSpace = 0;
         bool visible;
         public bool Visible { 
             get { return visible; }
@@ -23,13 +33,15 @@ namespace Utils {
                     thing.Visible = value;
             }
         }
-
+        
         public List<GuiElement> content = new List<GuiElement>();
 
-        public Panel(GraphicsDevice graphicsDevice, Texture2D texture, Point position, Point size, bool visible = true) {
+        public Panel(GraphicsDevice graphicsDevice, Texture2D texture, Point position, Point size, AlignItems alignItems = AlignItems.None, int separationSpace = 5, bool visible = true) {
             this.texture = texture;
             this.Position = position;
             this.Size = size;
+            this.alignItems = alignItems;
+            this.separationSpace = separationSpace;
             this.Visible = visible;
         }
 
@@ -44,7 +56,7 @@ namespace Utils {
                 thing.Draw(spriteBatch);
         }
 
-        public void Align(AlignItems alignItems, int separationSpace) {
+        public void Align() {
             var elemnSize = (x: 0, y: 0);
             for(var i = 0; i < content.Count; i++) {
                 elemnSize.x += content[i].Size.X + separationSpace;
@@ -83,7 +95,15 @@ namespace Utils {
                 case AlignItems.None:
                     break;
             }
+        }
 
+        public void AddElement(GuiElement element) {
+            content.Add(element);
+            Align();
+        }
+        public void RemoveElement(GuiElement element) {
+            content.Remove(element);
+            Align();
         }
     }
 }

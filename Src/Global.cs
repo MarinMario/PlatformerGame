@@ -12,5 +12,6 @@ namespace Src {
         public static Scene currentScene;
         public static Point resolution = new Point(1280, 720);
         public static Point cameraPos = Point.Zero;
+        public static SpriteFont font;
     }
 }

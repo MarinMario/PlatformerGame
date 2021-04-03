@@ -10,25 +10,53 @@ namespace Utils {
         public Texture2D ogTexture;
         public Texture2D hoverTexture;
         public Texture2D pressTexture;
-        public Point Position { get; set; }
+
+        Point position;
+        public Point Position { 
+            get { return position; }
+            set {
+                position = value;
+                if(label != null) {
+                    label.Position = value;
+                    label.Center();
+                }
+            }
+         }
         public Point Size { get; set; }
-        public bool Visible { get; set; }
+
+        bool visible;
+        public bool Visible { 
+            get { return visible; }
+            set {
+                visible = value;
+                if(label != null)
+                    label.Visible = value;
+            }
+        }
 
         bool previousPressed = false;
         bool currentPressed = false;
+        public Label label;
 
 
-        public Button(Texture2D texture, Point position, Point size, bool visible = true) {
+        public Button(Texture2D texture, Point position, Point size, SpriteFont font = null, Color? textColor = null, string text = "", bool visible = true) {
             this.texture = texture;
             this.ogTexture = texture;
             this.Position = position;
             this.Size = size;
             this.Visible = visible;
+            if (font != null && textColor != null) {
+                label = new Label(position, size, font, text, (Color)textColor);
+                label.Center();
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch) {
             if (Visible)
                 spriteBatch.Draw(texture, new Rectangle(Position, Size), Color.White);
+
+            if(label != null)
+                label.Draw(spriteBatch);
         }
 
         public bool Hovered(Point mousePos) {

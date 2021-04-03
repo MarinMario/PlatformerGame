@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
+using SpriteFontPlus;
 
 namespace Src {
     public class GameLoop : Game {
@@ -27,6 +28,19 @@ namespace Src {
 
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            var fontBakeResult = TtfFontBaker.Bake(System.IO.File.ReadAllBytes(@"Content\Font.ttf"),
+                20,
+                1024,
+                1024,
+                new[]
+                {
+                    CharacterRange.BasicLatin,
+                    CharacterRange.Latin1Supplement,
+                    CharacterRange.LatinExtendedA,
+                    CharacterRange.Cyrillic
+                }
+            );
+            Global.font = fontBakeResult.CreateSpriteFont(GraphicsDevice);
             Global.graphicsDevice = GraphicsDevice;
             Global.currentScene = new MenuScene();
             window = new Utils.Window(

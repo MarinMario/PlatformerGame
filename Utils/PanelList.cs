@@ -10,9 +10,9 @@ namespace Utils {
         public Texture2D texture;
         Button prevPage;
         Button nextPage;
-        Texture2D pageButtonNormal;
-        Texture2D pageButtonHover;
-        Texture2D pageButtonPress;
+        public Texture2D pageButtonNormal;
+        public Texture2D pageButtonHover;
+        public Texture2D pageButtonPress;
     
 
         Point position;
@@ -23,8 +23,8 @@ namespace Utils {
                 foreach(var thing in content)
                     thing.Position = position;
                 if (prevPage != null && nextPage != null) {
-                    prevPage.Position =  position + new Point(0, Size.Y);
-                    nextPage.Position = Size / new Point(2, 1);
+                    prevPage.Position = position + new Point(0, Size.Y);
+                    nextPage.Position = position + new Point(Size.X - nextPage.Size.X, Size.Y);
                 }
             }
 
@@ -36,21 +36,14 @@ namespace Utils {
         int pageCount = 0;
 
 
-        public PanelList(GraphicsDevice graphicsDevice, Texture2D texture, Point position, Point size, bool visible = true) {
+        public PanelList(GraphicsDevice graphicsDevice, Texture2D texture, Point position, Point size, Texture2D btn, Point btnSize, bool visible = true) {
             this.texture = texture;
             this.Position = position;
             this.Size = size;
             this.Visible = visible;
-
-            var buttonSize = new Point(size.X / 2, 16);
-            pageButtonNormal = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, Color.Gray);
-            pageButtonHover = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
-                new Color(Color.Gray.ToVector3() - Vector3.One * 0.1f));
-            pageButtonPress = Helper.ColorRect(graphicsDevice, buttonSize.X, buttonSize.Y, 
-                new Color(Color.Gray.ToVector3() - Vector3.One * 0.2f));
-            
-            prevPage = new Button(pageButtonNormal, position + new Point(0, size.Y), buttonSize);
-            nextPage = new Button(pageButtonNormal, position + new Point(size.X / 2, size.Y), buttonSize);
+            pageButtonNormal = pageButtonHover = pageButtonPress = btn;
+            prevPage = new Button(pageButtonNormal, position + new Point(0, size.Y), btnSize);
+            nextPage = new Button(pageButtonNormal, position + new Point(size.X - btnSize.X, size.Y), btnSize);
         }
 
         public void Update(Point mousePos) {
@@ -88,6 +81,15 @@ namespace Utils {
             for(var i = 0; i < content.Count; i++) {
                 content[i].Visible = i == pageCount && Visible;
             }
+        }
+
+        public void AddPanel(Panel panel) {
+            content.Add(panel);
+            panel.Position = Position;
+        }
+
+        public void RemovePanel(Panel panel) {
+            content.Remove(panel);
         }
     }
 }
