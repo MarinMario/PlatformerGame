@@ -28,19 +28,12 @@ namespace Src {
 
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            var fontBakeResult = TtfFontBaker.Bake(System.IO.File.ReadAllBytes(@"Content\Font.ttf"),
-                20,
-                1024,
-                1024,
-                new[]
-                {
-                    CharacterRange.BasicLatin,
-                    CharacterRange.Latin1Supplement,
-                    CharacterRange.LatinExtendedA,
-                    CharacterRange.Cyrillic
-                }
+            var fontBakeResult = TtfFontBaker.Bake(
+                System.IO.File.ReadAllBytes(@"Content\Font.ttf"), 20, 1024, 1024,
+                new[] { CharacterRange.BasicLatin, CharacterRange.Latin1Supplement }
             );
             Global.font = fontBakeResult.CreateSpriteFont(GraphicsDevice);
+            // Global.font.Spacing = -5;
             Global.graphicsDevice = GraphicsDevice;
             Global.currentScene = new MenuScene();
             window = new Utils.Window(

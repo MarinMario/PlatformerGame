@@ -10,8 +10,9 @@ namespace Src {
         public Rectangle CollisionBox { get; set; }
         Texture2D texture;
 
-        public Platform(Point position, int width, Texture2D texture, Collision collision) {
-            CollisionBox = new Rectangle(position.X, position.Y, width, 20);
+        public Platform(Point position, Point size, Texture2D texture, Collision collision) {
+            CollisionBox = new Rectangle(position, size);
+            this.texture = texture;
             collision.bodies.Add(this);
         }
 
@@ -30,10 +31,11 @@ namespace Src {
         Point targetPosition;
         public Vector2 velocity = Vector2.Zero;
 
-        public MovingPlatform(Point position1, Point position2, int width, Texture2D texture, Collision collision) {
+        public MovingPlatform(Point position1, Point position2, Point size, Texture2D texture, Collision collision) {
             this.position1 = position1;
             this.position2 = position2;
-            CollisionBox = new Rectangle(position1.X, position1.Y, width, 20);
+            this.texture = texture;
+            CollisionBox = new Rectangle(position1, size);
             collision.bodies.Add(this);
             targetPosition = position2;
         }
@@ -46,6 +48,23 @@ namespace Src {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(texture, CollisionBox, Color.White);
+        }
+    }
+
+    class Wall : Collider
+    {
+        public Rectangle CollisionBox { get; set; }
+        public Texture2D texture;
+        public Wall(Rectangle rect, Texture2D texture, Collision collision) 
+        {
+            this.CollisionBox = rect;
+            this.texture = texture;
+            collision.bodies.Add(this);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
             spriteBatch.Draw(texture, CollisionBox, Color.White);
         }
     }

@@ -21,9 +21,7 @@ namespace Utils {
         }
 
         public static Texture2D ColorRect(GraphicsDevice graphicsDevice, int width, int height, Color color) {
-            var q = 40;
-            var color2 = new Color(color.R + q, color.G + q, color.B + q);
-            return Rect(graphicsDevice, new Point(width, height), (int)Math.Sqrt(width + height) / 2, color2, color);
+            return Rect(graphicsDevice, new Point(width, height), 0, color, color);
         }
 
         public static float MoveVal(float n, float target, float amount) {
@@ -38,6 +36,29 @@ namespace Utils {
             var x = MoveVal(vector.X, target.X, amount);
             var y = MoveVal(vector.Y, target.Y, amount);
             return new Vector2(x, y);
+        }
+
+        public static void DrawLine(SpriteBatch sb, Texture2D texture, Point start, Point end, int width)
+        {
+            var edge = (end - start).ToVector2();
+            // calculate angle to rotate line
+            float angle =
+                (float)Math.Atan2(edge.Y , edge.X);
+
+
+            sb.Draw(texture,
+                new Rectangle(// rectangle defines shape of line and position of start of line
+                    (int)start.X,
+                    (int)start.Y,
+                    (int)edge.Length(), //sb will strech the texture to fill this rectangle
+                    width), //width of line, change this to make thicker line
+                null,
+                Color.White, //colour of line
+                angle,     //angle of line (calulated above)
+                new Vector2(0, 0), // point in line about which to rotate
+                SpriteEffects.None,
+                0);
+
         }
     }
 }

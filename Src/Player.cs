@@ -42,10 +42,11 @@ namespace Src {
         }
 
         void PlatformerMovement(float delta) {
+            var input = Input.GetKeyboardState();
             var directionX = 0;
-            if(Keyboard.GetState().IsKeyDown(Keys.A))
+            if(input.IsKeyDown(Keys.A))
                 directionX = -1;
-            if(Keyboard.GetState().IsKeyDown(Keys.D))
+            if(input.IsKeyDown(Keys.D))
                 directionX = 1;
             
             velocity.X = directionX * speed * delta;

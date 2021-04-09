@@ -12,43 +12,46 @@ namespace Src {
         Player player;
         Collision collision = new Collision();
         
-        Texture2D test1;
-        Texture2D test2;
-        Texture2D test3;
-        Texture2D cbTexture;
 
         Texture2D bg;
-        MovingPlatform movingPlatform;
+        List<MovingPlatform> movingPlatforms = new List<MovingPlatform>();
+        List<Platform> platforms = new List<Platform>();
+        List<Wall> walls = new List<Wall>();
 
         public GameScene() {
-            test1 = Helper.Rect(Global.graphicsDevice, new Point(700, 50), 5, Color.Red, Color.Blue);
-            test2 = Helper.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Yellow, Color.Blue);
-            test3 = Helper.Rect(Global.graphicsDevice, new Point(100, 100), 5, Color.Purple, Color.Blue);
-            cbTexture = Helper.Rect(Global.graphicsDevice, new Point(10, 10), 0, Color.Blue, Color.Blue);
+            var t = Helper.ColorRect(Global.graphicsDevice, 1, 1, new Color(255, 226, 104));
 
-            // map = MapLoader.Load(@"Content/Test.map");
-            // foreach(var cb in map.collisionRects)
-            //     colSys.staticBodies.Add(new CollisionBox(cb));
+            var level = LevelEditorScene.LoadLevel();
+            foreach(var thing in level)
+            {
+                if(thing.name == ObjectName.MovingPlatform)
+                    movingPlatforms.Add(new MovingPlatform(thing.position, (Point)thing.targetPosition, thing.size, t, collision));
+                else if(thing.name == ObjectName.Platform)
+                    platforms.Add(new Platform(thing.position, thing.size, t, collision));
+                else
+                    walls.Add(new Wall(new Rectangle(thing.position, thing.size), t, collision));
+            }
 
             player = new Player(collision);
-            var platformTexture = Helper.Rect(Global.graphicsDevice, new Point(10, 10), 0, Color.Red, Color.Red);
-            movingPlatform = new MovingPlatform(new Point(200, 600), new Point(500, 300), 200, platformTexture, collision);
-            var platform = new Platform(new Point(0, Global.resolution.Y - 20), Global.resolution.X, platformTexture, collision);
-            var p2 = new Platform(new Point(800, 500), 300, platformTexture, collision);
-
             
             bg = Helper.Rect(Global.graphicsDevice, Global.resolution, 0, Color.Gray, Color.Gray);
         }
 
         public void Update(float delta) {
             player.Update(delta);
-            movingPlatform.Update(delta);
+            foreach(var thing in movingPlatforms)
+                thing.Update(delta);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(bg, new Rectangle(Global.cameraPos, Global.resolution), Color.White);
-            foreach(var thing in collision.bodies)
-                spriteBatch.Draw(cbTexture, thing.CollisionBox, Color.White);
+            // spriteBatch.Draw(bg, new Rectangle(Global.cameraPos, Global.resolution), Color.White);
+            foreach(var thing in platforms)
+                thing.Draw(spriteBatch);
+            foreach(var thing in movingPlatforms)
+                thing.Draw(spriteBatch);
+            foreach(var thing in walls)
+                thing.Draw(spriteBatch);
+
             player.Draw(spriteBatch);
         }
     }
